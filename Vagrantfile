@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
 
     provider.name = "mc.xuc.me"
     provider.token = ENV["DIGITAL_OCEAN_TOKEN"]
-    provider.image = "centos"
+    provider.image = "centos-7-0-x64"
     provider.region = "sgp1"
     provider.size = "1gb"
   end
