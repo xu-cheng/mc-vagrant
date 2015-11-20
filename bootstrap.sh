@@ -17,6 +17,7 @@ sudo systemctl start fail2ban
 sudo systemctl enable fail2ban
 sudo systemctl start firewalld
 sudo systemctl enable firewalld
+sudo firewall-cmd --permanent --add-service=ssh
 sudo firewall-cmd --zone=public --permanent --add-port=25565/tcp
 
 sudo mkdir /opt/minecraft

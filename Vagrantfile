@@ -13,6 +13,8 @@ Vagrant.configure("2") do |config|
     provider.image = "centos-7-0-x64"
     provider.region = "sgp1"
     provider.size = "1gb"
+    provider.ipv6 = true
+    provider.ssh_key_name = "Personal SSH Key"
   end
 
   config.vm.provision :shell, path: "bootstrap.sh"
