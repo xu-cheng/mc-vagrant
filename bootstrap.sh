@@ -19,6 +19,7 @@ sudo systemctl start firewalld
 sudo systemctl enable firewalld
 sudo firewall-cmd --permanent --add-service=ssh
 sudo firewall-cmd --zone=public --permanent --add-port=25565/tcp
+sudo firewall-cmd --reload
 
 sudo mkdir /opt/minecraft
 cd /opt/minecraft
