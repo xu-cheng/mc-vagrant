@@ -1,0 +1,9 @@
+digital_ocean:
+  hostname: mc.xuc.me
+  region: sgp1
+  size: 1gb
+  ipv6: true
+  private_networking: false
+  ssh_key_name: Personal SSH key
+minecraft:
+  op_id: xu_cheng

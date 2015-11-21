@@ -1,5 +1,8 @@
 #!/bin/sh
 
+op_name=$1
+shift
+
 sudo yum update && sudo yum upgrade -y
 sudo yum install -y epel-release # deps
 sudo yum install -y vim tmux # tools
@@ -38,7 +41,7 @@ EOS
 chmod +x /opt/minecraft/start-minecraft
 tmux new-session -d -s minecraft-tmp /opt/minecraft/start-minecraft
 sleep 15
-tmux send -t minecraft-tmp:0 /op SPACE xu_cheng ENTER
+tmux send -t minecraft-tmp:0 /op SPACE "$op_name" ENTER
 sleep 15
 tmux kill-server
 sed -i 's/white-list=.*/white-list=true/g' /opt/minecraft/server.properties
