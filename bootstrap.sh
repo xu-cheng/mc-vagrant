@@ -48,8 +48,9 @@ tmux send -t minecraft-tmp:0 /op SPACE "$op_name" ENTER
 sleep 15
 tmux kill-server
 sed -i 's/white-list=.*/white-list=true/g' /opt/minecraft/server.properties
-sudo adduser --system --no-create-home --home /opt/minecraft minecraft
+sudo adduser --system --shell /sbin/nologin --no-create-home --home /opt/minecraft minecraft
 sudo chown -R minecraft /opt/minecraft
+sudo chgrp -R minecraft /opt/minecraft
 
 sudo tee /usr/lib/systemd/system/minecraft.service << EOS
 [Unit]
