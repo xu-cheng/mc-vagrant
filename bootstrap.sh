@@ -6,9 +6,11 @@ sudo yum install -y vim tmux # tools
 sudo yum install -y java-1.8.0-openjdk # java
 sudo yum install -y fail2ban # security
 
-sudo cp /etc/fail2ban/jail.{conf,local}
-sudo sed -i 's/bantime = .*/bantime = 7200/g' /etc/fail2ban/jail.local
-sudo tee -a /etc/fail2ban/jail.local << EOS
+sudo tee /etc/fail2ban/jail.local << EOS
+[DEFAULT]
+bantime = 7200
+banaction = firewallcmd-ipset
+
 [sshd]
 enabled = true
 EOS
