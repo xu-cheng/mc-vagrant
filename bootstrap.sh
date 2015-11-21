@@ -39,6 +39,7 @@ sleep 15
 tmux send -t minecraft-tmp:0 /op SPACE xu_cheng ENTER
 sleep 15
 tmux kill-server
+sed -i 's/white-list=.*/white-list=true/g' /opt/minecraft/server.properties
 sudo adduser --system --no-create-home --home /opt/minecraft minecraft
 sudo chown -R minecraft /opt/minecraft
 
