@@ -11,10 +11,13 @@ sudo yum install -y fail2ban # security
 
 sudo tee /etc/fail2ban/jail.local << EOS
 [DEFAULT]
-bantime = 7200
+bantime = 86400
 banaction = firewallcmd-ipset
 
 [sshd]
+enabled = true
+
+[sshd-ddos]
 enabled = true
 EOS
 
