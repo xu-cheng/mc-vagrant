@@ -9,7 +9,7 @@ sudo yum install -y vim tmux # tools
 sudo yum install -y java-1.8.0-openjdk # java
 sudo yum install -y fail2ban # security
 
-sudo tee /etc/fail2ban/jail.local << EOS
+sudo tee /etc/fail2ban/jail.local > /dev/null << EOS
 [DEFAULT]
 bantime = 86400
 banaction = firewallcmd-ipset
@@ -33,12 +33,12 @@ sudo mkdir /opt/minecraft
 cd /opt/minecraft
 curl -L https://s3.amazonaws.com/Minecraft.Download/versions/1.8.8/minecraft_server.1.8.8.jar \
      -o /opt/minecraft/minecraft_server.jar
-tee /opt/minecraft/start-minecraft << EOS
+tee /opt/minecraft/start-minecraft > /dev/null << EOS
 #!/bin/sh
 PATH=/usr/bin:\$PATH
 java -server -Xms512M -Xmx1024M -jar /opt/minecraft/minecraft_server.jar nogui
 EOS
-tee /opt/minecraft/eula.txt << EOS
+tee /opt/minecraft/eula.txt > /dev/null << EOS
 eula=true
 EOS
 chmod +x /opt/minecraft/start-minecraft
@@ -52,7 +52,7 @@ sudo adduser --system --shell /sbin/nologin --no-create-home --home /opt/minecra
 sudo chown -R minecraft /opt/minecraft
 sudo chgrp -R minecraft /opt/minecraft
 
-sudo tee /usr/lib/systemd/system/minecraft.service << EOS
+sudo tee /usr/lib/systemd/system/minecraft.service > /dev/null << EOS
 [Unit]
 Description=Minecraft server
 
