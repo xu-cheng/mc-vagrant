@@ -30,6 +30,23 @@ sudo firewall-cmd --permanent --add-service=ssh
 sudo firewall-cmd --zone=public --permanent --add-port=25565/tcp
 sudo firewall-cmd --reload
 
+### set swap ###
+sudo fallocate -l 4G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+sudo tee -a /etc/fstab > /dev/null << EOS
+/swapfile   swap    swap    sw  0   0
+EOS
+sudo sysctl vm.swappiness=10
+sudo sysctl vm.vfs_cache_pressure=50
+sudo tee -a /etc/sysctl.conf > /dev/null << EOS
+
+# swap
+vm.swappiness = 10
+vm.vfs_cache_pressure = 50
+EOS
+
 ### install minecraft ###
 sudo mkdir /opt/minecraft
 cd /opt/minecraft
