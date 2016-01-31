@@ -70,6 +70,7 @@ sed -i 's/white-list=.*/white-list=true/g' /opt/minecraft/server.properties
 sudo adduser --system --shell /sbin/nologin --no-create-home --home /opt/minecraft minecraft
 sudo chown -R minecraft /opt/minecraft
 sudo chgrp -R minecraft /opt/minecraft
+sudo chmod -R o-r /opt/minecraft
 
 sudo tee /usr/lib/systemd/system/minecraft.service > /dev/null << EOS
 [Unit]
