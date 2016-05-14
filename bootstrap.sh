@@ -48,25 +48,25 @@ vm.vfs_cache_pressure = 50
 EOS
 
 ### install minecraft ###
-sudo mkdir /opt/minecraft
-cd /opt/minecraft
+sudo mkdir -p /opt/minecraft/server
+cd /opt/minecraft/server
 curl -L https://s3.amazonaws.com/Minecraft.Download/versions/1.8.8/minecraft_server.1.8.8.jar \
-     -o /opt/minecraft/minecraft_server.jar
-tee /opt/minecraft/start-minecraft > /dev/null << EOS
+     -o /opt/minecraft/server/minecraft_server.jar
+tee /opt/minecraft/server/start-minecraft > /dev/null << EOS
 #!/bin/sh
 PATH=/usr/bin:\$PATH
-java -server -Xms512M -Xmx1024M -jar /opt/minecraft/minecraft_server.jar nogui
+java -server -Xms512M -Xmx1024M -jar /opt/minecraft/server/minecraft_server.jar nogui
 EOS
-tee /opt/minecraft/eula.txt > /dev/null << EOS
+tee /opt/minecraft/server/eula.txt > /dev/null << EOS
 eula=true
 EOS
 chmod +x /opt/minecraft/start-minecraft
-tmux new-session -d -s minecraft-tmp /opt/minecraft/start-minecraft
+tmux new-session -d -s minecraft-tmp /opt/minecraft/server/start-minecraft
 sleep 15
 tmux send -t minecraft-tmp:0 /op SPACE "$op_name" ENTER
 sleep 15
 tmux kill-server
-sed -i 's/white-list=.*/white-list=true/g' /opt/minecraft/server.properties
+sed -i 's/white-list=.*/white-list=true/g' /opt/minecraft/server/server.properties
 sudo adduser --system --shell /sbin/nologin --no-create-home --home /opt/minecraft minecraft
 sudo chown -R minecraft /opt/minecraft
 sudo chgrp -R minecraft /opt/minecraft
@@ -80,8 +80,8 @@ Description=Minecraft server
 Type=simple
 User=minecraft
 Group=minecraft
-WorkingDirectory=/opt/minecraft
-ExecStart=/opt/minecraft/start-minecraft
+WorkingDirectory=/opt/minecraft/server
+ExecStart=/opt/minecraft/server/start-minecraft
 # Timeout for start up/shut down
 TimeoutSec=300
 
