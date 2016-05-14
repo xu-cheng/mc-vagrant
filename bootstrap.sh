@@ -67,10 +67,16 @@ tmux send -t minecraft-tmp:0 /op SPACE "$op_name" ENTER
 sleep 15
 tmux kill-server
 sed -i 's/white-list=.*/white-list=true/g' /opt/minecraft/server/server.properties
+
+mkdir -p /opt/minecraft/backup/log
+cp /vagrant/mc-backup.rb /opt/minecraft/backup
+cp /vagrant/crontab /opt/minecraft
+
 sudo adduser --system --shell /sbin/nologin --no-create-home --home /opt/minecraft minecraft
 sudo chown -R minecraft /opt/minecraft
 sudo chgrp -R minecraft /opt/minecraft
 sudo chmod -R o-r /opt/minecraft
+sudo -u minecraft crontab /opt/minecraft/crontab
 
 sudo tee /usr/lib/systemd/system/minecraft.service > /dev/null << EOS
 [Unit]
