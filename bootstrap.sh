@@ -50,7 +50,7 @@ EOS
 ### install minecraft ###
 sudo mkdir -p /opt/minecraft/server
 cd /opt/minecraft/server
-curl -L https://s3.amazonaws.com/Minecraft.Download/versions/1.8.8/minecraft_server.1.8.8.jar \
+curl -L https://s3.amazonaws.com/Minecraft.Download/versions/1.9.4/minecraft_server.1.9.4.jar \
      -o /opt/minecraft/server/minecraft_server.jar
 tee /opt/minecraft/server/start-minecraft > /dev/null << EOS
 #!/bin/sh
