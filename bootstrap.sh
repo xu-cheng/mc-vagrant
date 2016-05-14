@@ -6,7 +6,7 @@ shift
 ### install packages ###
 sudo yum update && sudo yum upgrade -y
 sudo yum install -y epel-release # deps
-sudo yum install -y vim tmux # tools
+sudo yum install -y vim tmux ruby # tools
 sudo yum install -y java-1.8.0-openjdk # java
 sudo yum install -y fail2ban # security
 
