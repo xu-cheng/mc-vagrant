@@ -33,7 +33,7 @@ lock "/tmp/mc-backup.lock"
 mkdir_p STAGE_PATH
 mkdir_p AR_PATH
 
-system "rsync", "-avcr", MC_PATH, STAGE_PATH
+system "rsync", "-avcr", "--exclude", "logs", MC_PATH, STAGE_PATH
 cd(STAGE_PATH) do
   system "tar", "-czvf", AR_PATH/"#{Time.now.iso8601}.tar.gz", "."
 end
