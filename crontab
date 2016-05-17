@@ -1,1 +1,1 @@
-0 0 * * * /opt/minecraft/backup/mc-backup.rb 2>> /opt/minecraft/backup/log/backup.log
+0 0 * * * /opt/minecraft/backup/mc-backup.rb >> /opt/minecraft/backup/log/backup.log 2>&1
