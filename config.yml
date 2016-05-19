@@ -6,4 +6,4 @@ digital_ocean:
   private_networking: false
   ssh_key_name: Personal SSH key
 minecraft:
-  op_id: xu_cheng
+  op_id: xucheng
