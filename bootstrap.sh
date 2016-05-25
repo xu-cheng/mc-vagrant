@@ -6,7 +6,8 @@ shift
 ### install packages ###
 sudo yum update && sudo yum upgrade -y
 sudo yum install -y epel-release # deps
-sudo yum install -y vim tmux ruby # tools
+sudo yum install -y gcc
+sudo yum install -y vim ruby # tools
 sudo yum install -y java-1.8.0-openjdk # java
 sudo yum install -y fail2ban # security
 
@@ -52,21 +53,24 @@ sudo mkdir -p /opt/minecraft/server
 cd /opt/minecraft/server
 curl -L https://s3.amazonaws.com/Minecraft.Download/versions/1.9.4/minecraft_server.1.9.4.jar \
      -o /opt/minecraft/server/minecraft_server.jar
+curl -L https://github.com/Tiiffi/mcrcon/raw/master/mcrcon.c -o /tmp/mcrcon.c
+gcc -std=gnu11 -pedantic -Wall -Wextra -O2 -s -o /opt/minecraft/server/mcrcon /tmp/mcrcon.c
+rm /tmp/mcrcon.c
+chmod a+x /opt/minecraft/server/mcrcon
+MCRCON_PASS="$(ruby -rsecurerandom -e 'puts SecureRandom.hex(20)')"
+echo "$MCRCON_PASS" > /opt/minecraft/server/.mcrcon-pass
 tee /opt/minecraft/server/start-minecraft > /dev/null << EOS
 #!/bin/sh
 PATH=/usr/bin:\$PATH
 java -server -Xms512M -Xmx1024M -jar /opt/minecraft/server/minecraft_server.jar nogui
 EOS
+chmod +x /opt/minecraft/start-minecraft
 tee /opt/minecraft/server/eula.txt > /dev/null << EOS
 eula=true
 EOS
-chmod +x /opt/minecraft/start-minecraft
-tmux new-session -d -s minecraft-tmp /opt/minecraft/server/start-minecraft
-sleep 15
-tmux send -t minecraft-tmp:0 /op SPACE "$op_name" ENTER
-sleep 15
-tmux kill-server
 sed -i 's/white-list=.*/white-list=true/g' /opt/minecraft/server/server.properties
+sed -i 's/enable-rcon=.*/enable-rcon=true/g' /opt/minecraft/server/server.properties
+echo "rcon.password=$MCRCON_PASS" >> /opt/minecraft/server/server.properties
 
 mkdir -p /opt/minecraft/backup/log
 cp /vagrant/mc-backup.rb /opt/minecraft/backup
@@ -96,3 +100,4 @@ WantedBy=graphical.target
 EOS
 sudo systemctl start minecraft
 sudo systemctl enable minecraft
+sudo -u minecraft /opt/minecraft/server/mcrcon -H localhost -p $MCRCON_PASS "op $op_name"
