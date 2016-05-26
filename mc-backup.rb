@@ -35,11 +35,11 @@ lock "/tmp/mc-backup.lock"
 mkdir_p STAGE_PATH
 mkdir_p AR_PATH
 
-system MCRCON, "-H", "localhost", "-p", MCRCON_PW, "say [Server] Backup started."
+system MCRCON, "-H", "localhost", "-p", MCRCON_PW, 'tellraw @a {"text":"[Server] Backup started.","color":"blue","bold":true}'
 system "rsync", "-avcr", "--exclude", "logs", MC_PATH, STAGE_PATH
 cd(STAGE_PATH) do
   system "tar", "-czvf", AR_PATH/"#{Time.now.iso8601}.tar.gz", "."
 end
 system "find", AR_PATH, "-mtime", "+3", "-type", "f", "-print", "-delete"
-system MCRCON, "-H", "localhost", "-p", MCRCON_PW, "say [Server] Backup done."
+system MCRCON, "-H", "localhost", "-p", MCRCON_PW, 'tellraw @a {"text":"[Server] Backup done.","color":"blue","bold":true}'
 
