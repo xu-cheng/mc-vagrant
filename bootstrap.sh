@@ -6,7 +6,6 @@ shift
 ### install packages ###
 sudo yum update && sudo yum upgrade -y
 sudo yum install -y epel-release # deps
-sudo yum install -y gcc
 sudo yum install -y vim ruby # tools
 sudo yum install -y java-1.8.0-openjdk # java
 sudo yum install -y fail2ban # security
@@ -53,10 +52,7 @@ sudo mkdir -p /opt/minecraft/server
 cd /opt/minecraft/server
 curl -L https://s3.amazonaws.com/Minecraft.Download/versions/1.9.4/minecraft_server.1.9.4.jar \
      -o /opt/minecraft/server/minecraft_server.jar
-curl -L https://github.com/Tiiffi/mcrcon/raw/master/mcrcon.c -o /tmp/mcrcon.c
-gcc -std=gnu11 -pedantic -Wall -Wextra -O2 -s -o /opt/minecraft/server/mcrcon /tmp/mcrcon.c
-rm /tmp/mcrcon.c
-chmod a+x /opt/minecraft/server/mcrcon
+cp /vagrant/mcrcon /opt/minecraft/server/mcrcon
 MCRCON_PASS="$(ruby -rsecurerandom -e 'puts SecureRandom.hex(20)')"
 echo "$MCRCON_PASS" > /opt/minecraft/server/.mcrcon-pass
 tee /opt/minecraft/server/start-minecraft > /dev/null << EOS
@@ -100,4 +96,4 @@ WantedBy=graphical.target
 EOS
 sudo systemctl start minecraft
 sudo systemctl enable minecraft
-sudo -u minecraft /opt/minecraft/server/mcrcon -H localhost -p $MCRCON_PASS "op $op_name"
+sudo -u minecraft /opt/minecraft/server/mcrcon -p $MCRCON_PASS "op $op_name"
