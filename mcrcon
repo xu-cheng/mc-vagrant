@@ -1,0 +1,162 @@
+#!/usr/bin/env ruby
+
+VERSION = "1.0.0"
+
+require "socket"
+
+# Ref: http://wiki.vg/Rcon
+#      http://minecraft.gamepedia.com/Commands
+class MCRcon
+  COMMAND_LIST = %w[
+    achievement ban banlist blockdata clear clone debug defaultgamemode deop difficulty
+    effect enchant entitydata execute fill gamemode gamerule give help kick kill list me
+    op pardon particle playsound publish replaceitem save say scoreboard seed setblock
+    setidletimeout setworldspawn spawnpoint spreadplayers stats stop stopsound summon tell
+    tellraw testfor testforblock testforblocks time title toggledownfall tp trigger weather
+    whitelist worldborder xp
+  ].freeze
+
+  attr_reader :host, :port
+
+  def initialize(args={})
+    @host = args.fetch(:host, "127.0.0.1")
+    @port = args.fetch(:port, 25575)
+    @password = args[:password]
+    @socket = Socket.new :INET, :STREAM
+  end
+
+  def connect!
+    socket.connect Socket.pack_sockaddr_in(port, host)
+    @id = rand(0x7FFFFFFF)
+  end
+
+  def disconnect!
+    socket.close
+    @id = nil
+  end
+
+  def auth!
+    send(3, password) if password
+  end
+
+  def command(command)
+    send(2, command)
+  end
+
+  def repl
+    require "readline"
+    Readline.completion_append_character = " "
+    Readline.completion_proc = proc { |s| COMMAND_LIST.grep(/^#{Regexp.escape(s)}/) }
+
+    connect!
+    auth!
+    while buf = Readline.readline("> ", true)
+      puts command(buf)
+    end
+  ensure
+    disconnect!
+  end
+
+  protected
+
+  attr_reader :password, :socket, :id
+
+  private
+
+  def send(type, data)
+    payload = [id, type].pack("l<*") + data.encode("utf-8") + "\x00\x00"
+    size = [payload.size].pack("l<")
+    socket.write size + payload
+
+    res_data = ""
+    while IO.select([socket], nil, nil, 1)
+      res_size = socket.read(4).unpack("l<").first
+      res_payload = socket.read(res_size)
+      res_id, _res_type = res_payload[0...8].unpack("l<*")
+      res_body = res_payload[8...-2]
+      res_padding = res_payload[-2..-1]
+
+      if res_padding != "\x00\x00"
+        raise "Incorrect padding!"
+      end
+
+      if res_id == -1
+        raise "Authentication failed!"
+      elsif res_id != id
+        raise "Incorrect id!"
+      end
+
+      res_body.force_encoding("utf-8")
+      res_data += res_body
+    end
+
+    res_data
+  end
+end
+
+if __FILE__ == $0
+  require "optparse"
+  require "ostruct"
+
+  args = {}
+  options = OpenStruct.new
+  opts = OptionParser.new do |opts|
+    opts.banner = "Usage: mcrcon [options] [commands]"
+    opts.version = VERSION
+
+    opts.separator ""
+    opts.separator "Connect options:"
+    opts.on("-H", "--host HOST","Host name to connect (Default: 127.0.0.1)") do |host|
+      args[:host] = host
+    end
+    opts.on("-P", "--port PORT", OptionParser::DecimalInteger, "Port number to connect (Default: 25575)") do |port|
+      args[:port] = port
+    end
+    opts.on("-p", "--password PASSWORD", "Password to connect") do |password|
+      args[:password] = password unless password.empty?
+    end
+
+    opts.separator ""
+    opts.separator "Command mode options:"
+    opts.on("-s", "Silent mode") do |silent|
+      options.silent = silent
+    end
+
+    opts.separator ""
+    opts.separator "Terminal mode options:"
+    opts.on("-t", "Terminal mode") do |terminal|
+      options.terminal = terminal
+    end
+
+    opts.separator ""
+    opts.separator "Common options:"
+    opts.on_tail("-h", "--help", "Show this message") do
+      puts opts.help
+      exit
+    end
+    opts.on_tail("-v", "--version", "Show version") do
+      puts opts.ver
+      exit
+    end
+  end
+  opts.parse!
+
+  mcrcon = MCRcon.new args
+  if options.terminal
+    mcrcon.repl
+  elsif ARGV.empty?
+    puts opts.help
+    exit 1
+  else
+    mcrcon.connect!
+    begin
+      mcrcon.auth!
+      ARGV.each do |cmd|
+        res = mcrcon.command(cmd)
+        puts res unless options.silent
+      end
+    ensure
+      mcrcon.disconnect!
+    end
+  end
+end
