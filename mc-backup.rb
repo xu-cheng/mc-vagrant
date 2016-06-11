@@ -36,7 +36,7 @@ mkdir_p STAGE_PATH
 mkdir_p AR_PATH
 
 system MCRCON, "-p", MCRCON_PW, 'tellraw @a {"text":"[Server] Backup started.","color":"blue","bold":true}'
-system "rsync", "-avcr", "--exclude", "logs", MC_PATH, STAGE_PATH
+system "rsync", "-avcr", "--delete", "--exclude", "logs", MC_PATH, STAGE_PATH
 cd(STAGE_PATH) do
   system "tar", "-czvf", AR_PATH/"#{Time.now.iso8601}.tar.gz", "."
 end
