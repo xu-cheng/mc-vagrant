@@ -50,7 +50,7 @@ EOS
 ### install minecraft ###
 sudo mkdir -p /opt/minecraft/server
 cd /opt/minecraft/server
-curl -L https://s3.amazonaws.com/Minecraft.Download/versions/1.10/minecraft_server.1.10.jar \
+curl -L https://s3.amazonaws.com/Minecraft.Download/versions/1.10.2/minecraft_server.1.10.2.jar \
      -o /opt/minecraft/server/minecraft_server.jar
 cp /vagrant/mcrcon /opt/minecraft/server/mcrcon
 MCRCON_PASS="$(ruby -rsecurerandom -e 'puts SecureRandom.hex(20)')"
