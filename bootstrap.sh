@@ -95,8 +95,9 @@ sudo systemctl start minecraft
 sudo systemctl enable minecraft
 sleep 10
 sudo systemctl stop minecraft
-sudo -u minecraft sed -i '/white-list=.*/d' /opt/minecraft/server/server.properties
-sudo -u minecraft sed -i '/enable-rcon=.*/d' /opt/minecraft/server/server.properties
+sudo -u minecraft sed -i.bak '/white-list=.*/d' /opt/minecraft/server/server.properties
+sudo -u minecraft sed -i.bak '/enable-rcon=.*/d' /opt/minecraft/server/server.properties
+rm /opt/minecraft/server/server.properties.bak
 sudo -u minecraft tee -a /opt/minecraft/server/server.properties > /dev/null <<EOS
 white-list=true
 enable-rcon=true
