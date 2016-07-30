@@ -6,7 +6,7 @@ shift
 ### install packages ###
 sudo yum update && sudo yum upgrade -y
 sudo yum install -y epel-release # deps
-sudo yum install -y vim ruby # tools
+sudo yum install -y vim ruby cronie # tools
 sudo yum install -y java-1.8.0-openjdk # java
 sudo yum install -y fail2ban # security
 
@@ -64,9 +64,6 @@ chmod +x /opt/minecraft/start-minecraft
 tee /opt/minecraft/server/eula.txt > /dev/null << EOS
 eula=true
 EOS
-sed -i 's/white-list=.*/white-list=true/g' /opt/minecraft/server/server.properties
-sed -i 's/enable-rcon=.*/enable-rcon=true/g' /opt/minecraft/server/server.properties
-echo "rcon.password=$MCRCON_PASS" >> /opt/minecraft/server/server.properties
 
 mkdir -p /opt/minecraft/backup/log
 cp /vagrant/mc-backup.rb /opt/minecraft/backup
@@ -96,4 +93,9 @@ WantedBy=graphical.target
 EOS
 sudo systemctl start minecraft
 sudo systemctl enable minecraft
+sleep 10
+sudo -u minecraft sed -i 's/white-list=.*/white-list=true/g' /opt/minecraft/server/server.properties
+sudo -u minecraft sed -i 's/enable-rcon=.*/enable-rcon=true/g' /opt/minecraft/server/server.properties
+sudo -u minecraft echo "rcon.password=$MCRCON_PASS" >> /opt/minecraft/server/server.properties
+sudo systemctl restart minecraft
 sudo -u minecraft /opt/minecraft/server/mcrcon -p $MCRCON_PASS "op $op_name"
