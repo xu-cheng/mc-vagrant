@@ -95,8 +95,12 @@ sudo systemctl start minecraft
 sudo systemctl enable minecraft
 sleep 10
 sudo systemctl stop minecraft
-sudo -u minecraft sed -i 's/white-list=.*/white-list=true/g' /opt/minecraft/server/server.properties
-sudo -u minecraft sed -i 's/enable-rcon=.*/enable-rcon=true/g' /opt/minecraft/server/server.properties
-sudo -u minecraft echo "rcon.password=$MCRCON_PASS" >> /opt/minecraft/server/server.properties
+sudo -u minecraft sed -i '/white-list=.*/d' /opt/minecraft/server/server.properties
+sudo -u minecraft sed -i '/enable-rcon=.*/d' /opt/minecraft/server/server.properties
+sudo -u minecraft tee -a /opt/minecraft/server/server.properties > /dev/null <<EOS
+white-list=true
+enable-rcon=true
+rcon.password=$MCRCON_PASS
+EOS
 sudo systemctl start minecraft
 sudo -u minecraft /opt/minecraft/server/mcrcon -p $MCRCON_PASS "op $op_name"
